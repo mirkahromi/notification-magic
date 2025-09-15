@@ -1,7 +1,10 @@
 alert("This is from notificaiton js file")
-// MacOS-style Notification System
+
+    // MacOS-style Notification System with Debug
 (function() {
     'use strict';
+    
+    console.log('🔔 Notification system loading...');
     
     // Create notification container
     let container = null;
@@ -9,21 +12,33 @@ alert("This is from notificaiton js file")
     function createContainer() {
         if (container) return container;
         
+        console.log('📦 Creating notification container...');
+        
         container = document.createElement('div');
         container.id = 'notification-container';
         container.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
-            z-index: 10000;
+            z-index: 999999;
             pointer-events: none;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         `;
+        
+        // Ensure body exists
+        if (!document.body) {
+            console.error('❌ Document body not found!');
+            return null;
+        }
+        
         document.body.appendChild(container);
+        console.log('✅ Container added to body');
         return container;
     }
     
     function createNotification(options = {}) {
+        console.log('🎨 Creating notification with options:', options);
+        
         const {
             icon = '🔔',
             title = 'Notification',
@@ -87,6 +102,7 @@ alert("This is from notificaiton js file")
         
         // Click to dismiss
         notification.addEventListener('click', () => {
+            console.log('👆 Notification clicked');
             dismissNotification(notification);
         });
         
@@ -103,6 +119,7 @@ alert("This is from notificaiton js file")
     }
     
     function dismissNotification(notification) {
+        console.log('👋 Dismissing notification');
         notification.style.transform = 'translateX(100%)';
         notification.style.opacity = '0';
         
@@ -114,44 +131,80 @@ alert("This is from notificaiton js file")
     }
     
     function showNotification(options) {
-        const container = createContainer();
-        const notification = createNotification(options);
+        console.log('🚀 showNotification called with:', options);
         
-        container.appendChild(notification);
-        
-        // Trigger animation
-        requestAnimationFrame(() => {
-            notification.style.transform = 'translateX(0)';
-            notification.style.opacity = '1';
-        });
-        
-        // Auto dismiss
-        const duration = options.duration || 60000;
-        setTimeout(() => {
-            dismissNotification(notification);
-        }, duration);
-        
-        return notification;
+        try {
+            const container = createContainer();
+            if (!container) {
+                console.error('❌ Failed to create container');
+                return null;
+            }
+            
+            const notification = createNotification(options);
+            container.appendChild(notification);
+            console.log('📌 Notification added to container');
+            
+            // Trigger animation
+            requestAnimationFrame(() => {
+                console.log('🎬 Animating notification in');
+                notification.style.transform = 'translateX(0)';
+                notification.style.opacity = '1';
+            });
+            
+            // Auto dismiss
+            const duration = options.duration || 60000;
+            setTimeout(() => {
+                dismissNotification(notification);
+            }, duration);
+            
+            return notification;
+            
+        } catch (error) {
+            console.error('❌ Error showing notification:', error);
+            return null;
+        }
     }
     
     // Global API
     window.showNotification = showNotification;
+    console.log('🌍 Global showNotification function registered');
     
     // Auto-show notification on load
     function init() {
-        showNotification({
-            icon: '🎉',
-            title: 'Notification System Loaded',
-            message: 'The notification system is now active and ready to use!',
-            duration: 5000
-        });
+        console.log('🎯 Initializing notification system...');
+        
+        // Wait a bit to ensure everything is ready
+        setTimeout(() => {
+            console.log('⏰ Showing initial notification');
+            showNotification({
+                icon: '🎉',
+                title: 'System Ready!',
+                message: 'Notification system loaded successfully. Check console for debug info.',
+                duration: 8000
+            });
+        }, 100);
     }
     
-    // Execute on DOM ready
-    if (document.readyState === 'loading') {
+    // Multiple ways to ensure DOM is ready
+    if (document.readyState === 'complete') {
+        console.log('📄 Document already complete, initializing now');
+        init();
+    } else if (document.readyState === 'loading') {
+        console.log('⏳ Document loading, waiting for DOMContentLoaded');
         document.addEventListener('DOMContentLoaded', init);
     } else {
+        console.log('📄 Document interactive, initializing now');
         init();
     }
+    
+    // Fallback
+    window.addEventListener('load', () => {
+        console.log('🏁 Window loaded, ensuring notification system is active');
+        if (!container) {
+            init();
+        }
+    });
+    
+    console.log('✨ Notification system script fully loaded');
     
 })();

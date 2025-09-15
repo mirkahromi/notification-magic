@@ -1,6 +1,4 @@
 alert("This is from notificaiton js file")
-
-    // MacOS-style Notification System with Debug
 (function() {
     'use strict';
     

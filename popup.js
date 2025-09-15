@@ -1,4 +1,6 @@
-alert("This is from notificaiton js file")
+// this is a production file :)
+console.log("popup.js");
+
 (function() {
     'use strict';
     

@@ -136,4 +136,21 @@
     // Global API
     window.showNotification = showNotification;
     
+    // Auto-show notification on load
+    function init() {
+        showNotification({
+            icon: '🎉',
+            title: 'Notification System Loaded',
+            message: 'The notification system is now active and ready to use!',
+            duration: 5000
+        });
+    }
+    
+    // Execute on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+    
 })();
